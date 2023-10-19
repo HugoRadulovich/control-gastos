@@ -1,6 +1,4 @@
 
-import { FiltrosGastos } from './FiltrosGastos'
-import { ListadoGastos } from './ListadoGastos'
 
 export const Gastos = ({presupuesto,setPresupuesto}) => {
   return (
@@ -12,8 +10,7 @@ export const Gastos = ({presupuesto,setPresupuesto}) => {
           <p className=""><span className="font-bold">Disponible: </span> 122</p>
           <p className=""><span className="font-bold">Gastado: </span> 500</p>
       </div>
-      <FiltrosGastos/>
-      <ListadoGastos/>
+  
 
     
 
