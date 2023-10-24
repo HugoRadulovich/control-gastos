@@ -1,21 +1,42 @@
 
 
-import  { useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { generarId } from '../helpers/generarId';
 
-export const Modal = ({setModal,gastos,setGastos}) => {
+export const Modal = ({setModal,gastos,setGastos,gastoEditar}) => {
 
     const [formState, setFormState] = useState({
         nombre: '',
         monto: 0,
     })
 
-    const handleInputChange = ({target}) => {
-        const {name,value} = target;
+    const {nombre,monto} = gastoEditar;
+    console.log(nombre,monto)
+
+useEffect(() => {
+   
+    if (Object.keys(gastoEditar).length > 0) {
+        setModal(true)
         setFormState({
-            ...formState,
-            [name]: value
+            nombre: nombre,
+            monto: monto,
         })
+
+        console.log('estoy cambiando')
+        
+    }
+
+  
+}, [gastoEditar])
+
+
+    const handleInputChange = ({target}) => {
+            const {name,value} = target;
+            setFormState({
+                ...formState,
+                [name]: value
+            })
+       console.log(formState)
 
     }
     
