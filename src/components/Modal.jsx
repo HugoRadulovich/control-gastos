@@ -3,15 +3,22 @@
 import  { useEffect, useState } from 'react'
 import { generarId } from '../helpers/generarId';
 
-export const Modal = ({setModal,gastos,setGastos,gastoEditar}) => {
+export const Modal = ({setModal,gastos,setGastos,gastoEditar,setGastoEditar}) => {
 
     const [formState, setFormState] = useState({
+        id: '',
         nombre: '',
         monto: 0,
+        categoria:'all',
+        fecha: Date.now(),
     })
 
-    const {nombre,monto} = gastoEditar;
-    console.log(nombre,monto)
+    const handleClickCancelar = () => {
+        setModal(false);
+        setGastoEditar([]) ;
+    } 
+
+    const {nombre,monto,categoria,fecha} = gastoEditar;
 
 useEffect(() => {
    
@@ -20,9 +27,13 @@ useEffect(() => {
         setFormState({
             nombre: nombre,
             monto: monto,
+            categoria: categoria,
+            fecha: fecha,
+        
         })
-
-        console.log('estoy cambiando')
+        
+    }else{
+        return
         
     }
 
@@ -36,21 +47,39 @@ useEffect(() => {
                 ...formState,
                 [name]: value
             })
-       console.log(formState)
 
     }
     
 
     const onFormSubmit = (event) => {
         event.preventDefault();
-        console.log(formState)
-        const {nombre,monto,select} = formState;
-        if([nombre,monto,select].includes('')){
-            console.log('error')
-            return
+        if (Object.keys(gastoEditar).length > 0) {
+            const {nombre,monto,select} = formState;
+            if([nombre,monto,select].includes('')){
+                console.log('error')
+                return
+            }
+            formState.id = gastoEditar.id;
+            const gastoEdit = gastos?.map(gastoEdit => gastoEdit.id === formState.id ? formState : gastoEdit);
+           
+            setGastos(gastoEdit);
+            setGastoEditar([])
+            setModal(false);
+           
+
+        }else{
+            
+            const {nombre,monto,select} = formState;
+            if([nombre,monto,select].includes('')){
+                console.log('error')
+                return
+            }
+            formState.id = generarId();
+            setGastos([...gastos, formState])
+            setModal(false)
+           
         }
-        formState.id = generarId();
-        setGastos([...gastos, formState])
+       
     }
 
 
@@ -98,7 +127,7 @@ useEffect(() => {
                                         onChange={handleInputChange}
                                         
                                     />
-                                    <label htmlFor="" className="mt-2">Cantidad: </label>
+                                    <label htmlFor="" className="mt-2">Monto Gastado: </label>
                                     <input 
                                         type="number" 
                                         className="border-2 border-black rounded" 
@@ -107,28 +136,50 @@ useEffect(() => {
                                         value={formState.monto}
                                         onChange={handleInputChange}
                                     />
-                                    <label htmlFor="" className="mt-2">Categoria: </label>
-                                    <select name="select" id="" className="border-2 border-black rounded" onChange={handleInputChange}>
-                                        <option value="comida" className=""  > --Seleccione--</option>
-                                        <option value="comida" className="">Comida</option>
-                                        <option value="casa" className="">Casa</option>
-                                        <option value="varios" className="">Gastos Varios</option>
-                                        <option value="ocio" className="">Ocio</option>
-                                        <option value="salud" className="">Salud</option>
-                                        <option value="suscripciones" className="">Suscripciones</option>
-                                    </select>
-                                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                                    <button type="button" className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto" onClick = { () => setModal(false)}>Guardar</button>
-                                    <button type="button" className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto " onClick = { () => setModal(false)}>Cancelar</button>
-                                    </div>
-                                    <input type="submit" className=""  value= 'gola'/>
+                                      <label htmlFor="categoria" className='mt-2'>Categoría</label>
+
+                                        <select
+                                            id="categoria"
+                                            name="categoria"
+                                            className='border-2 border-black rounded'
+                                            value={formState.categoria}
+                                            onChange={ handleInputChange}
+                                        >
+                                            <option value="">-- Seleccione --</option>
+                                            <option value="ahorro">Ahorro</option>
+                                            <option value="comida">Comida</option>
+                                            <option value="casa">Casa</option>
+                                            <option value="gastos">Gastos Varios</option>
+                                            <option value="ocio">Ocio</option>
+                                            <option value="salud">Salud</option>
+                                            <option value="suscripciones">Suscripciones</option>
+                                        </select>
+                                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row gap-2 sm:px-6">
+                                        {
+                                            (Object.keys(gastoEditar).length > 0) 
+                                            ? 
+                                            <input type="submit" 
+                                                className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto" 
+                                                value= 'Editar'/> 
+                                            : 
+                                                <input 
+                                                    type="submit" 
+                                                    className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"  
+                                                    value= 'Agregar'/> 
+                                            
+                                        }
+                                        <input 
+                                        type="submit" 
+                                        className="mt-3 inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-400 sm:mt-0 sm:w-auto "  
+                                        value= 'Cancelar' 
+                                        onClick={handleClickCancelar}/> 
+                                        
+                                    </div>       
                             </form>
-                            {/* <p className="text-sm text-gray-500">Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone.</p> */}
                         </div>
                         </div>
                     </div>
                     </div>
-                   
                 </div>
                 </div>
             </div>

@@ -9,12 +9,13 @@ const [monto, setMonto] = useState(0)
 
     const handleInputChange = (e) => {
         setMonto(e.target.value)
-        console.log(monto)
+
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setPresupuesto(monto)
+      
+        setPresupuesto(parseInt(monto))
     
     }
 
